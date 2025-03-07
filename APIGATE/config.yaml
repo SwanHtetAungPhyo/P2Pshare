@@ -1,0 +1,38 @@
+service_leader:
+  name: my-service
+  version: 1.0.0
+  environment: production
+  description: My service description
+
+  logging:
+    log_request_body: false
+    log_response_body: false
+    min_level: info
+
+  env:
+    - name: PORT
+      value: ":8082"
+    - name: JWT_SECRET
+      value: my-secret-key
+
+  filter:
+    jwt: true
+    rate_limit: 5
+    ip_whitelist: ["127.0.0.1"]
+    ip_blacklist: ["192.168.1.1"]
+
+  services:
+    - name: service_one
+      allowed_methods: ["GET", "POST"]
+      urls:
+        - "http://localhost:8081"
+      prefix: "/api/v1"
+      filter:
+        jwt: true
+
+    - name: service_two
+      allowed_methods: ["GET"]
+      urls:
+        - "http://localhost:8083"
+        - "http://localhost:8084"
+      prefix: "/api/v2"
